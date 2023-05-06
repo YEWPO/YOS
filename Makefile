@@ -74,7 +74,7 @@ QEMUGDBFLAGS = -S -gdb \
 # run debug
 gdb: $(KERNELBIN)
 	@grep -E "set auto-load safe-path /" ~/.gdbinit || echo "set auto-load safe-path /" >> ~/.gdbinit
-	@echo "**********Start riscv64-unknown-linux-gnu-gdb on another window********************"
+	@printf "\e[1;31m**********Start gdb on another window********************\e[0;m\n"
 	@$(QEMU) $(QEMUFLAGS) -kernel $(KERNELBIN) $(QEMUGDBFLAGS) 
 
 docs: clean

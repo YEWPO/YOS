@@ -2,6 +2,7 @@
 #define _RISCV64_H
 
 #include <stdint.h>
+#include "common.h"
 
 /// 读取通用寄存器宏
 #define READ_GRR(name) ({ \
@@ -36,6 +37,10 @@
 #define SSTATUS_SIE 1
 #define SSTATUS_SPIE 5
 #define SSTATUS_SPP 8
+
+#define GET_SSTATUS_SIE GET_BIT(READ_CSR(s, status),  SSTATUS_SIE)
+#define SET_SSTATUS_SIE WRITE_CSR(s, status, SET_BIT(READ_CSR(s, status), SSTATUS_SIE))
+#define CLEAR_SSTATUS_SIE WRITE_CSR(s, status, CLEAR_BIT(READ_CSR(s, status), SSTATUS_SIE))
 
 // stvec
 #define STVEC_MODE 0
