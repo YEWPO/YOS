@@ -1,0 +1,11 @@
+CompileFlags:
+  Add: [-Wall,
+    -Werror,
+    -ggdb3,
+    -MD,
+    -ffreestanding,
+    -fno-common,
+    -nostdlib,
+    -mno-relax,
+    -mcmodel=medany,
+    -I/home/yewpo/Desktop/test/GlimmerOS/include]
