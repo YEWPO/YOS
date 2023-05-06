@@ -24,6 +24,11 @@ static void set_next_timer() {
   sbi_set_timer(read_time() + INTERRUPT_TIME);
 }
 
+/**
+ * handle timer interrupt
+ *
+ * @return no return 
+ */
 void timer_handler() {
   Log("Timer Interrupt!");
   set_next_timer();
@@ -64,6 +69,7 @@ void kernel_trap_handler() {
 
     if (exception == STI) {
       timer_handler();
+      // yield
     }
   }
 
