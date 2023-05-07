@@ -43,8 +43,8 @@ static void output(int ch) {
  * @return 无返回
  */
 static void printf_num() {
-  char buf[30];
-  int i = 0;
+  char buf[30] = {'0'};
+  int i = number == 0 ? 1 : 0;
 
   if (negtive == 1) {
     if (number < 0) {
