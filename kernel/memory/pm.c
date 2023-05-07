@@ -1,5 +1,5 @@
 #include "kernel.h"
-#include "stdc.h"
+#include "common.h"
 #include "debug.h"
 
 /// 可用物理地址的最小值

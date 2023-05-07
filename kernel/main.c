@@ -1,5 +1,5 @@
 #include "debug.h"
-#include "stdc.h"
+#include "marco.h"
 #include "common.h"
 #include "kernel.h"
 

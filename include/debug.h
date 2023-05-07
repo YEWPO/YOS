@@ -2,7 +2,7 @@
 #define _DEGUG_H
 
 #include "lib/stdio.h"
-#include "common.h"
+#include "marco.h"
 
 /// 打印日志信息
 #define Log(format, ...) \
