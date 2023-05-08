@@ -1,5 +1,5 @@
-#ifndef _STDC_H
-#define _STDC_H
+#ifndef _COMMON_H
+#define _COMMON_H
 
 // 常用头文件集合
 #include <stdint.h>

@@ -1,5 +1,5 @@
-#ifndef _COMMON_H
-#define _COMMON_H
+#ifndef _MACRO_H
+#define _MACRO_H
 
 // 颜色属性
 #define ANSI_FG_BLACK   "\e[1;30m"

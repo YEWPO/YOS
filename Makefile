@@ -77,6 +77,7 @@ gdb: $(KERNELBIN)
 	@printf "\e[1;31m**********Start gdb on another window********************\e[0;m\n"
 	@$(QEMU) $(QEMUFLAGS) -kernel $(KERNELBIN) $(QEMUGDBFLAGS) 
 
+# generate document
 docs: clean
 	./docs.sh
 
