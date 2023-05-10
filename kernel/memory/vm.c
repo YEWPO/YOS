@@ -102,24 +102,42 @@ word_t va_unmap_pa(pagetable_t pagetable, addr_t va) {
 void kernel_pagetable_init() {
   Log("Initializing kernel pagetable");
 
+  Log("Alloc kernel pagetable");
   kernel_pagetable = alloc_physic_page();
   Assert(kernel_pagetable != NULL, "alloc kernel pagetable failed!");
 
   // map text part
+  Log("mapping text part");
   addr_t kaddr = KERNEL_BASE;
   for (; kaddr < (addr_t)endtext; kaddr += PAGE_SIZE) {
     va_map_pa(kernel_pagetable, kaddr, kaddr, MPTE_FLAG(R) | MPTE_FLAG(X));
   }
 
   // map rodata part
+  Log("mapping rodata part");
   for (; kaddr < (addr_t)endrodata; kaddr += PAGE_SIZE) {
     va_map_pa(kernel_pagetable, kaddr, kaddr, MPTE_FLAG(R));
   }
 
   // map data part
+  Log("mapping data part");
   for (; kaddr < PHYSIC_MEM_TOP; kaddr += PAGE_SIZE) {
     va_map_pa(kernel_pagetable, kaddr, kaddr, MPTE_FLAG(R) | MPTE_FLAG(W));
   }
+
+  Log("mapping proc kernel stack");
+  for (int i = 0; i < NPROC; ++i) {
+    addr_t proc_kernel_stack_pa = (addr_t)alloc_physic_page();
+    Assert(proc_kernel_stack_pa != 0, "alloc proc kernel stack failed!");
+
+    addr_t proc_kernel_stack_va = PROC_KERNEL_STACK(i);
+
+    va_map_pa(kernel_pagetable, proc_kernel_stack_va, proc_kernel_stack_pa, MPTE_FLAG(R) | MPTE_FLAG(W));
+  }
+
+  // map trampoline part
+  Log("mapping trampoline section");
+  va_map_pa(kernel_pagetable, TRAMPOLINE, (addr_t)trampoline, MPTE_FLAG(R) | MPTE_FLAG(X));
 
   Log("Initialized kernel pagetable");
 }

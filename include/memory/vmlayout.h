@@ -13,4 +13,7 @@
 /// trapframe的虚拟地址
 #define TRAPFRAME (TRAMPOLINE - PAGE_SIZE)
 
+/// 用户进程内核栈的栈底地址
+#define PROC_KERNEL_STACK(index) (TRAMPOLINE - (index + 1) * 2 * PAGE_SIZE)
+
 #endif
