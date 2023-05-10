@@ -11,6 +11,7 @@
 #define TRAMPOLINE (VA_MAX - PAGE_SIZE)
 
 /// trapframe的虚拟地址
+// trampoline.S 中存在重复定义
 #define TRAPFRAME (TRAMPOLINE - PAGE_SIZE)
 
 /// 用户进程内核栈的栈底地址

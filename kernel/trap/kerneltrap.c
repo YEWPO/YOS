@@ -77,5 +77,5 @@ void kernel_trap_handler() {
   }
 
   WRITE_CSR(s, status, sstatus);
-  WRITE_CSR(s, epc , sepc);
+  WRITE_CSR(s, epc, sepc);
 }
