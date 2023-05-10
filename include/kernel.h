@@ -6,6 +6,7 @@
 #include "memory/vmlayout.h"
 
 #include "trap/kerneltrap.h"
+#include "trap/usertrap.h"
 
 #include "process/proc.h"
 #include "process/cpu.h"
