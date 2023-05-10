@@ -2,12 +2,13 @@
 #define _VMLAYOUT_H
 
 #include "pm.h"
+#include "marco.h"
 
 /// 虚拟地址的最大值
-#define  VA_MAX 0x3fffffffl
+#define  VA_MAX SET_BIT(0, 38)
 
 /// trampoline的虚拟地址
-#define TRAMPOLINE PAGE_START(VA_MAX)
+#define TRAMPOLINE (VA_MAX - PAGE_SIZE)
 
 /// trapframe的虚拟地址
 #define TRAPFRAME (TRAMPOLINE - PAGE_SIZE)
