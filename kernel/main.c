@@ -4,7 +4,7 @@
 #include "kernel.h"
 
 /// 内核栈
-__attribute__ (( aligned(16) )) char boot_stack[4096];
+__attribute__ (( aligned(16) )) char boot_stack[PAGE_SIZE * NCPU];
 
 /**
  * 初始化相关寄存器的值

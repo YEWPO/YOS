@@ -7,6 +7,9 @@
 
 #include "trap/kerneltrap.h"
 
+#include "process/proc.h"
+#include "process/cpu.h"
+
 #include "riscv64.h"
 
 #endif
