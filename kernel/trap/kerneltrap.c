@@ -71,6 +71,9 @@ void kernel_trap_handler() {
       timer_handler();
       // yield
     }
+  } else {
+    // not an interrupt
+    Assert(0, "kernel trap need to implement!");
   }
 
   WRITE_CSR(s, status, sstatus);
