@@ -17,7 +17,7 @@ static void env_init() {
   WRITE_GRR(tp, hartid);
 
   // 设置sstatus的SIE位，启用中断
-  WRITE_CSR(s, status, SET_BIT(READ_CSR(s, status), SSTATUS_SIE));
+  SET_SSTATUS_SIE;
 
   // 设置SIE寄存器
   uint64_t sie = 0;

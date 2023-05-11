@@ -10,4 +10,6 @@ struct cpu {
   struct context cpu_context;
 };
 
+extern struct cpu cpu[NCPU];
+
 #endif
