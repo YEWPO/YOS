@@ -2,7 +2,7 @@
 #define _DEGUG_H
 
 #include "lib/stdio.h"
-#include "marco.h"
+#include "macro.h"
 #include "riscv64.h"
 
 static inline void panic() {

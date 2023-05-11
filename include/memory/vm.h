@@ -1,7 +1,7 @@
 #ifndef _VM_H
 #define _VM_H
 
-#include "marco.h"
+#include "macro.h"
 #include "common.h"
 
 // virtual address

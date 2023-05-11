@@ -1,4 +1,4 @@
-#include "marco.h"
+#include "macro.h"
 #include "kernel.h"
 #include "debug.h"
 #include "lib/sbi.h"

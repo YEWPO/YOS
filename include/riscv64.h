@@ -2,7 +2,7 @@
 #define _RISCV64_H
 
 #include <stdint.h>
-#include "marco.h"
+#include "macro.h"
 
 /// 读取通用寄存器宏
 #define READ_GRR(name) ({ \
