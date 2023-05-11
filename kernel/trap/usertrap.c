@@ -3,6 +3,16 @@
 #include "riscv64.h"
 #include "debug.h"
 
+extern char trampoline[];
+extern void uservec();
+extern void userret(uint64_t satp);
+extern void kernelvec();
+
+/**
+ * handle user trap
+ * 
+ * @return void no return
+ */
 void user_trap_handler() {
   Assert(GET_BIT(READ_CSR(s, status), SSTATUS_SPP) == 0x0,
          "Trap not from user!");
@@ -27,6 +37,11 @@ void user_trap_handler() {
   }
 }
 
+/**
+ * resume user space
+ *
+ * @return void no return
+ */
 void user_resume() {
   struct proc *current_proc = cpu[READ_GRR(tp)].user_proc_running;
 

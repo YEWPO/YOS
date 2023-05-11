@@ -4,9 +4,6 @@
 #include <stdint.h>
 
 void user_trap_handler();
-
-extern char trampoline[];
-extern void uservec();
-extern void userret(uint64_t satp);
+void user_resume();
 
 #endif

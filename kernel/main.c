@@ -44,7 +44,13 @@ void main() {
     satp_init();
 
     kernel_trap_init();
+
+    proc_init();
+
+    user_proc_init();
   } else {
     while (1) {};
   }
+
+  switch2user();
 }

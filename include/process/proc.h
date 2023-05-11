@@ -81,4 +81,8 @@ struct proc {
   struct context user_context;
 };
 
+void proc_init();
+void user_proc_init();
+void switch2user();
+
 #endif

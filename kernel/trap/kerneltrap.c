@@ -3,6 +3,8 @@
 #include "debug.h"
 #include "lib/sbi.h"
 
+extern void kernelvec();
+
 // timer gap
 #define INTERRUPT_TIME 0x100000l
 
