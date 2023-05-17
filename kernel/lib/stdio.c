@@ -222,14 +222,14 @@ int printf(const char *format, ...) {
   
   va_list ap;
   va_start(ap, format);
-  ret = vprintf(format, ap);
+  int retval = vprintf(format, ap);
   va_end(ap) ;
   
   out_size = -1;
 
   release_lock(&print_lock);
 
-  return ret;
+  return retval;
 }
 
 /**
@@ -247,14 +247,14 @@ int vsprintf(char *out, const char *format, va_list ap) {
   out_target = 1;
   buffer = out;
 
-  vprintf(format, ap);
+  int retval = vprintf(format, ap);
 
   *buffer = '\0';
   out_size = -1;
 
   release_lock(&print_lock);
 
-  return ret;
+  return retval;
 }
 
 /**
@@ -273,7 +273,7 @@ int sprintf(char *out, const char *format, ...) {
 
   va_list ap;
   va_start(ap, format);
-  ret = vprintf(format, ap);
+  int retval = vprintf(format, ap);
   va_end(ap) ;
 
   *buffer = '\0';
@@ -281,7 +281,7 @@ int sprintf(char *out, const char *format, ...) {
 
   release_lock(&print_lock);
   
-  return ret;
+  return retval;
 }
 
 /**
@@ -306,7 +306,7 @@ int snprintf(char *out, size_t n, const char *format, ...) {
 
   va_list ap;
   va_start(ap, format);
-  ret = vprintf(format, ap);
+  int retval = vprintf(format, ap);
   va_end(ap) ;
 
   *buffer = '\0';
@@ -314,7 +314,7 @@ int snprintf(char *out, size_t n, const char *format, ...) {
 
   release_lock(&print_lock);
 
-  return ret;
+  return retval;
 }
 
 /**
@@ -338,14 +338,14 @@ int vsnprintf(char *out, size_t n, const char *format, va_list ap) {
   buffer = out;
   out_size = n - 1;
 
-  ret = vprintf(format, ap);
+  int retval = vprintf(format, ap);
 
   *buffer = '\0';
   out_size = -1;
 
   release_lock(&print_lock);
 
-  return ret;
+  return retval;
 }
 
 /**
