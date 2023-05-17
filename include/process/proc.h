@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "memory/vm.h"
+#include "lock/spinlock.h"
 
 #define NPROC 64
 
@@ -73,6 +74,8 @@ enum proc_state {
 };
 
 struct proc {
+  struct spinlock proc_lock;
+
   enum proc_state state;
   int pid;
 

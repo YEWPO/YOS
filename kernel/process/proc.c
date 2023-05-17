@@ -21,6 +21,7 @@ void test() {
 
 // process id for next alloc proc
 static int next_pid = 1;
+static struct spinlock pid_lock = {0};
 
 /**
  * alloc a pid for a proc
@@ -28,8 +29,10 @@ static int next_pid = 1;
  * @return int pid for a proc
  */
 static int alloc_pid() {
+  acquire_lock(&pid_lock);
   int pid = next_pid;
   next_pid++;
+  release_lock(&pid_lock);
   return pid;
 }
 
@@ -42,6 +45,7 @@ void proc_init() {
   Log("Initializing process...");
 
   for (int i = 0; i < NPROC; ++i) {
+    proc[i].proc_lock.is_locked = false;
     proc[i].state = UNUSED;
     proc[i].proc_kernel_stack = PROC_KERNEL_STACK(i);
   }
