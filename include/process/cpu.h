@@ -2,6 +2,7 @@
 #define _CPU_H
 
 #include "process/proc.h"
+#include "riscv64.h"
 
 #define NCPU 1
 
