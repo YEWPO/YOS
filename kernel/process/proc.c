@@ -135,7 +135,7 @@ void user_proc_init() {
  * @return void 无返回
  */
 void switch2user() {
-  struct cpu *current_cpu = &cpu[READ_GRR(tp)];
+  struct cpu *current_cpu = &cpu[CPU_ID];
 
   current_cpu->user_proc_running = NULL;
   while (true) {

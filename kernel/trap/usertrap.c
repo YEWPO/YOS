@@ -19,7 +19,7 @@ void user_trap_handler() {
 
   WRITE_CSR(s, tvec, (uint64_t)kernelvec);
 
-  struct proc *current_proc = cpu[READ_GRR(tp)].user_proc_running;
+  struct proc *current_proc = cpu[CPU_ID].user_proc_running;
 
   current_proc->user_trapframe->user_pc = READ_CSR(s, epc);
 
@@ -43,7 +43,7 @@ void user_trap_handler() {
  * @return void no return
  */
 void user_resume() {
-  struct proc *current_proc = cpu[READ_GRR(tp)].user_proc_running;
+  struct proc *current_proc = cpu[CPU_ID].user_proc_running;
 
   CLEAR_SSTATUS_SIE;
 

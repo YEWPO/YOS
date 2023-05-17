@@ -12,4 +12,6 @@ struct cpu {
 
 extern struct cpu cpu[NCPU];
 
+#define CPU_ID READ_GRR(tp)
+
 #endif
