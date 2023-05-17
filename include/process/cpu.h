@@ -9,6 +9,9 @@
 struct cpu {
   struct proc *user_proc_running;
   struct context cpu_context;
+
+  int lock_num;
+  bool prev_lock_status;
 };
 
 extern struct cpu cpu[NCPU];
