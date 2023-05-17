@@ -9,5 +9,7 @@ struct spinlock {
 
 void push_lock();
 void pop_lock();
+void acquire_lock();
+void release_lock();
 
 #endif

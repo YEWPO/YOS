@@ -41,3 +41,37 @@ void pop_lock() {
     SET_SSTATUS_SIE;
   }
 }
+
+/**
+ * 获取锁
+ *
+ * @param lock 需要获取的锁
+ *
+ * @return void 获取到锁之后无返回
+ */
+void acquire_lock(struct spinlock *lock) {
+  push_lock();
+
+  Assert(!is_locked(lock), "The lock is hold when acquire this lock!");
+
+  while(__sync_lock_test_and_set(&lock->is_locked, true) != 0);
+
+  __sync_synchronize();
+}
+
+/**
+ * 释放锁
+ *
+ * @param lock 需要释放的锁
+ *
+ * @return void 释放到锁之后无返回
+ */
+void release_lock(struct spinlock *lock) {
+  Assert(is_locked(lock), "The lock is not hold when release this lock!");
+
+  __sync_synchronize();
+
+  __sync_lock_release(&lock->is_locked);
+
+  pop_lock();
+}
