@@ -89,5 +89,6 @@ void proc_init();
 void root_proc_init();
 void switch2user();
 void switch2kernel();
+void yield();
 
 #endif
