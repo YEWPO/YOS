@@ -9,7 +9,7 @@ struct spinlock {
 
 void push_lock();
 void pop_lock();
-void acquire_lock();
-void release_lock();
+void acquire_lock(struct spinlock *lock);
+void release_lock(struct spinlock *lock);
 
 #endif
