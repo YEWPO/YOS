@@ -11,6 +11,7 @@ struct pPage {
 };
 
 static struct pPage *_free;
+static struct spinlock free_list_lock = {0};
 
 /**
  * 初始化可以使用的物理页面链表
@@ -42,11 +43,12 @@ void physic_memory_init(){
 void* alloc_physic_page() {
   struct pPage *page;
 
+  acquire_lock(&free_list_lock);
   page = _free;
-
   if (page != NULL) {
     _free = _free->next;
   }
+  release_lock(&free_list_lock);
 
   if (page) {
     memset(page, 0, PAGE_SIZE);
@@ -68,6 +70,8 @@ void free_physic_page(void* addr) {
   memset(addr, 0xcd, PAGE_SIZE);
   struct pPage *page = addr;
 
+  acquire_lock(&free_list_lock);
   page->next = _free;
   _free = page;
+  release_lock(&free_list_lock);
 }
