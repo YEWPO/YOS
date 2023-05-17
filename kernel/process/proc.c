@@ -178,4 +178,23 @@ void switch2user() {
  * @return void 无返回
  */
 void switch2kernel() {
+  struct proc *current_proc = current_cpu_proc();
+
+  Assert(is_locked(&current_proc->proc_lock), "The proc lock isn't hold during switch to kernel");
+  Assert(cpu[CPU_ID].lock_num == 1, "The cpu hold more than 1 lock during switch to kernel");
+  Assert(current_proc->state == RUNNING, "The proc is not running during switch to kernel");
+  Assert(GET_SSTATUS_SIE == 0, "The interrupt is on during switch to kernel");
+
+  // switch to kernel
+  bool prev_cpu_locked_status = cpu[CPU_ID].prev_lock_status;
+  context_exchange(&current_proc->user_context, &cpu[CPU_ID].cpu_context);
+  cpu[CPU_ID].prev_lock_status = prev_cpu_locked_status;
+}
+
+void yield() {
+  struct proc *current_proc = current_cpu_proc();
+  acquire_lock(&current_proc->proc_lock);
+  current_proc->state = RUNABLE;
+  switch2kernel();
+  release_lock(&current_proc->proc_lock);
 }
