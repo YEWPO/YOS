@@ -47,6 +47,12 @@ void proc_init() {
   }
 }
 
+/**
+ * 找到一个没有被使用的进程块
+ *
+ * @return struct proc* 返回找到的进程块地址
+ * 如果没有找到，返回空指针
+ */
 static struct proc *find_unused_proc() {
   for (int i = 0; i < NPROC; ++i) {
     if (proc[i].state == UNUSED) {
@@ -57,11 +63,21 @@ static struct proc *find_unused_proc() {
   return NULL;
 }
 
+/**
+ * 向分配的新的进程块分配trapframe空间
+ *
+ * @return bool 成功返回true
+ */
 static bool alloc_proc_trapframe(struct proc *alloc_proc) {
   alloc_proc->user_trapframe = (struct trapframe *)alloc_physic_page();
   return true;
 }
 
+/**
+ * 向分配的新的进程块分配用户页表
+ *
+ * @return true 分配成功返回true
+ */
 static bool alloc_proc_pagetable(struct proc *alloc_proc) {
   pagetable_t proc_pagetable = alloc_physic_page();
 
@@ -73,6 +89,12 @@ static bool alloc_proc_pagetable(struct proc *alloc_proc) {
   return true;
 }
 
+/**
+ * 分配一个进程块给用户程序
+ *
+ * @return struct proc* 分配成功则返回进程块的地址
+ * 分配失败返回空指针
+ */
 static struct proc *alloc_proc() {
   struct proc *available_proc = find_unused_proc();
 
@@ -93,6 +115,11 @@ static struct proc *alloc_proc() {
   return available_proc;
 }
 
+/**
+ * 初始化第一各用户进程root
+ *
+ * @return void 无返回
+ */
 void user_proc_init() {
   root_proc = alloc_proc();
 
@@ -102,8 +129,13 @@ void user_proc_init() {
   root_proc->state = RUNABLE;
 }
 
+/**
+ * 从内核态进程切换到用户进程
+ *
+ * @return void 无返回
+ */
 void switch2user() {
-  struct cpu *current_cpu = &cpu[READ_GRR(tp)];
+  struct cpu *current_cpu = &cpu[CPU_ID];
 
   current_cpu->user_proc_running = NULL;
   while (true) {
@@ -116,4 +148,12 @@ void switch2user() {
       }
     }
   }
+}
+
+/**
+ * 从用户进程切换到内核进程
+ *
+ * @return void 无返回
+ */
+void switch2kernel() {
 }

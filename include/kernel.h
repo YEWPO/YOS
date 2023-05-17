@@ -11,6 +11,8 @@
 #include "process/proc.h"
 #include "process/cpu.h"
 
+#include "lock/spinlock.h"
+
 #include "riscv64.h"
 
 #endif
