@@ -86,7 +86,7 @@ struct proc {
 };
 
 void proc_init();
-void user_proc_init();
+void root_proc_init();
 void switch2user();
 void switch2kernel();
 

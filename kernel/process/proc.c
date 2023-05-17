@@ -29,8 +29,10 @@ static struct spinlock pid_lock = {0};
  * @return int pid for a proc
  */
 static int alloc_pid() {
+  int pid;
+
   acquire_lock(&pid_lock);
-  int pid = next_pid;
+  pid = next_pid;
   next_pid++;
   release_lock(&pid_lock);
   return pid;
@@ -59,8 +61,11 @@ void proc_init() {
  */
 static struct proc *find_unused_proc() {
   for (int i = 0; i < NPROC; ++i) {
+    acquire_lock(&proc[i].proc_lock);
     if (proc[i].state == UNUSED) {
       return proc + i;
+    } else {
+      release_lock(&proc[i].proc_lock);
     }
   }
 
@@ -103,18 +108,22 @@ static struct proc *alloc_proc() {
   struct proc *available_proc = find_unused_proc();
 
   if (available_proc == NULL) {
+    // not proc available
     return NULL;
   }
 
   available_proc->pid = alloc_pid();
-  available_proc->state = USED;
 
   alloc_proc_trapframe(available_proc);
   alloc_proc_pagetable(available_proc);
 
+  // init ra and sp
   memset(&available_proc->user_context, 0, sizeof(available_proc->user_context));
   available_proc->user_context.ra = (uint64_t)test;
   available_proc->user_context.sp = available_proc->proc_kernel_stack + PAGE_SIZE;
+
+  // set state
+  available_proc->state = USED;
 
   return available_proc;
 }
@@ -124,13 +133,15 @@ static struct proc *alloc_proc() {
  *
  * @return void 无返回
  */
-void user_proc_init() {
+void root_proc_init() {
   root_proc = alloc_proc();
 
   root_proc->user_trapframe->user_pc = 0;
   root_proc->user_trapframe->proc_kernel_sp = PAGE_SIZE;
 
   root_proc->state = RUNABLE;
+
+  release_lock(&root_proc->proc_lock);
 }
 
 /**
