@@ -14,11 +14,6 @@ extern char trampoline[];
 
 extern void context_exchange(struct context *old, struct context *new);
 
-void test() {
-  Log("TEST");
-  user_resume();
-}
-
 // process id for next alloc proc
 static int next_pid = 1;
 static struct spinlock pid_lock = {0};
@@ -63,6 +58,7 @@ static struct proc *find_unused_proc() {
   for (int i = 0; i < NPROC; ++i) {
     acquire_lock(&proc[i].proc_lock);
     if (proc[i].state == UNUSED) {
+      Log("get proc %d unused and alloc it", i);
       return proc + i;
     } else {
       release_lock(&proc[i].proc_lock);
@@ -119,7 +115,7 @@ static struct proc *alloc_proc() {
 
   // init ra and sp
   memset(&available_proc->user_context, 0, sizeof(available_proc->user_context));
-  available_proc->user_context.ra = (uint64_t)test;
+  available_proc->user_context.ra = (uint64_t)user_resume;
   available_proc->user_context.sp = available_proc->proc_kernel_stack + PAGE_SIZE;
 
   // set state
@@ -155,12 +151,20 @@ void switch2user() {
   current_cpu->user_proc_running = NULL;
   while (true) {
     for (int i = 0; i < NPROC; ++i) {
+      acquire_lock(&proc[i].proc_lock);
       if (proc[i].state == RUNABLE) {
+        Log("get proc %d to run", i);
+
         proc[i].state = RUNNING;
         current_cpu->user_proc_running = &proc[i];
+
+        // switch context
         context_exchange(&current_cpu->cpu_context, &proc[i].user_context);
+
+        // finish runing and set back
         current_cpu->user_proc_running = NULL;
       }
+      release_lock(&proc[i].proc_lock);
     }
   }
 }
