@@ -71,7 +71,11 @@ void kernel_trap_handler() {
 
     if (exception == STI) {
       timer_handler();
+
       // yield
+      if (current_cpu_proc() != NULL && current_cpu_proc()->state == RUNNING) {
+        yield();
+      }
     }
   } else {
     // not an interrupt

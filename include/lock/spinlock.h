@@ -11,5 +11,6 @@ void push_lock();
 void pop_lock();
 void acquire_lock(struct spinlock *lock);
 void release_lock(struct spinlock *lock);
+bool is_locked(struct spinlock *lock);
 
 #endif
