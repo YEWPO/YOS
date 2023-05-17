@@ -115,7 +115,7 @@ static struct proc *alloc_proc() {
 
   // init ra and sp
   memset(&available_proc->user_context, 0, sizeof(available_proc->user_context));
-  available_proc->user_context.ra = (uint64_t)user_resume;
+  available_proc->user_context.ra = (uint64_t)user_env_init;
   available_proc->user_context.sp = available_proc->proc_kernel_stack + PAGE_SIZE;
 
   // set state
@@ -138,6 +138,12 @@ void root_proc_init() {
   root_proc->state = RUNABLE;
 
   release_lock(&root_proc->proc_lock);
+}
+
+void user_env_init() {
+  release_lock(&current_cpu_proc()->proc_lock);
+
+  user_resume();
 }
 
 /**
@@ -182,7 +188,7 @@ void switch2kernel() {
 
   Assert(is_locked(&current_proc->proc_lock), "The proc lock isn't hold during switch to kernel");
   Assert(cpu[CPU_ID].lock_num == 1, "The cpu hold more than 1 lock during switch to kernel");
-  Assert(current_proc->state == RUNNING, "The proc is not running during switch to kernel");
+  Assert(current_proc->state != RUNNING, "The proc is running during switch to kernel");
   Assert(GET_SSTATUS_SIE == 0, "The interrupt is on during switch to kernel");
 
   // switch to kernel
@@ -191,6 +197,11 @@ void switch2kernel() {
   cpu[CPU_ID].prev_lock_status = prev_cpu_locked_status;
 }
 
+/**
+ * 时间片用完，切换进程
+ *
+ * @return void 无返回
+ */
 void yield() {
   struct proc *current_proc = current_cpu_proc();
   acquire_lock(&current_proc->proc_lock);

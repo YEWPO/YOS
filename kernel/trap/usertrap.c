@@ -39,7 +39,10 @@ void user_trap_handler() {
   } else {
     // not an interrupt
     Assert(0, "user trap need to implement!");
+    // Log("usertrap");
   }
+
+  user_resume();
 }
 
 /**
