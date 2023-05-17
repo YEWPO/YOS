@@ -1,4 +1,5 @@
 .altmacro
+
 .equ XLEN, 8
 
 .macro SAVE_REG reg, offset
@@ -34,7 +35,9 @@ kernelvec:
   SAVE_N 1
   SAVE_N 2
   SAVE_N 3
+
   # not tp (contains hartid), in case we moved CPUs
+
   .set n, 5
   .rept 27
     LOAD_N %n

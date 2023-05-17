@@ -42,17 +42,22 @@ uservec:
     .set n, n + 1
   .endr
 
+  # save a0
   csrr t0, sscratch
   sd t0, 10 * XLEN(a0)
 
+  # load satp
   ld t1, 32 * XLEN(a0)
+  # load sp
   ld sp, 33 * XLEN(a0)
+  # load usertraphandler address
+  ld t0, 35 * XLEN(a0)
 
   sfence.vma zero, zero
   csrw satp, t1
   sfence.vma zero, zero
 
-  j user_trap_handler
+  jr t0
 
 .global userret
 userret:

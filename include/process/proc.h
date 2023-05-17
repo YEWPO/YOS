@@ -58,9 +58,10 @@ struct trapframe {
   uint64_t x30;
   uint64_t x31;
 
-  uint64_t kernel_satp;
-  uint64_t proc_kernel_sp;
-  uint64_t user_pc;
+  uint64_t kernel_satp;           // 32
+  uint64_t proc_kernel_sp;        // 33
+  uint64_t user_pc;               // 34
+  uint64_t kernle_user_trap_handler; //35
 };
 
 enum proc_state {

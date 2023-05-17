@@ -52,6 +52,7 @@ void user_resume() {
 
   current_proc->user_trapframe->kernel_satp = READ_CSR(s, atp);
   current_proc->user_trapframe->proc_kernel_sp = current_proc->proc_kernel_stack + PAGE_SIZE;
+  current_proc->user_trapframe->kernle_user_trap_handler = (uint64_t)user_trap_handler;
 
   uint64_t sstatus = READ_CSR(s, status);
 
