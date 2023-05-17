@@ -14,13 +14,9 @@ extern char trampoline[];
 
 extern void context_exchange(struct context *old, struct context *new);
 
-void test() {
-  Log("TEST");
-  user_resume();
-}
-
 // process id for next alloc proc
 static int next_pid = 1;
+static struct spinlock pid_lock = {0};
 
 /**
  * alloc a pid for a proc
@@ -28,8 +24,12 @@ static int next_pid = 1;
  * @return int pid for a proc
  */
 static int alloc_pid() {
-  int pid = next_pid;
+  int pid;
+
+  acquire_lock(&pid_lock);
+  pid = next_pid;
   next_pid++;
+  release_lock(&pid_lock);
   return pid;
 }
 
@@ -42,6 +42,7 @@ void proc_init() {
   Log("Initializing process...");
 
   for (int i = 0; i < NPROC; ++i) {
+    proc[i].proc_lock.is_locked = false;
     proc[i].state = UNUSED;
     proc[i].proc_kernel_stack = PROC_KERNEL_STACK(i);
   }
@@ -55,8 +56,12 @@ void proc_init() {
  */
 static struct proc *find_unused_proc() {
   for (int i = 0; i < NPROC; ++i) {
+    acquire_lock(&proc[i].proc_lock);
     if (proc[i].state == UNUSED) {
+      Log("get proc %d unused and alloc it", i);
       return proc + i;
+    } else {
+      release_lock(&proc[i].proc_lock);
     }
   }
 
@@ -99,18 +104,22 @@ static struct proc *alloc_proc() {
   struct proc *available_proc = find_unused_proc();
 
   if (available_proc == NULL) {
+    // not proc available
     return NULL;
   }
 
   available_proc->pid = alloc_pid();
-  available_proc->state = USED;
 
   alloc_proc_trapframe(available_proc);
   alloc_proc_pagetable(available_proc);
 
+  // init ra and sp
   memset(&available_proc->user_context, 0, sizeof(available_proc->user_context));
-  available_proc->user_context.ra = (uint64_t)test;
+  available_proc->user_context.ra = (uint64_t)user_env_init;
   available_proc->user_context.sp = available_proc->proc_kernel_stack + PAGE_SIZE;
+
+  // set state
+  available_proc->state = USED;
 
   return available_proc;
 }
@@ -120,13 +129,21 @@ static struct proc *alloc_proc() {
  *
  * @return void 无返回
  */
-void user_proc_init() {
+void root_proc_init() {
   root_proc = alloc_proc();
 
   root_proc->user_trapframe->user_pc = 0;
   root_proc->user_trapframe->proc_kernel_sp = PAGE_SIZE;
 
   root_proc->state = RUNABLE;
+
+  release_lock(&root_proc->proc_lock);
+}
+
+void user_env_init() {
+  release_lock(&current_cpu_proc()->proc_lock);
+
+  user_resume();
 }
 
 /**
@@ -139,13 +156,24 @@ void switch2user() {
 
   current_cpu->user_proc_running = NULL;
   while (true) {
+    // make device can interrupt
+    SET_SSTATUS_SIE;
+
     for (int i = 0; i < NPROC; ++i) {
+      acquire_lock(&proc[i].proc_lock);
       if (proc[i].state == RUNABLE) {
+        Log("get proc %d to run", i);
+
         proc[i].state = RUNNING;
         current_cpu->user_proc_running = &proc[i];
+
+        // switch context
         context_exchange(&current_cpu->cpu_context, &proc[i].user_context);
+
+        // finish runing and set back
         current_cpu->user_proc_running = NULL;
       }
+      release_lock(&proc[i].proc_lock);
     }
   }
 }
@@ -156,4 +184,28 @@ void switch2user() {
  * @return void 无返回
  */
 void switch2kernel() {
+  struct proc *current_proc = current_cpu_proc();
+
+  Assert(is_locked(&current_proc->proc_lock), "The proc lock isn't hold during switch to kernel");
+  Assert(cpu[CPU_ID].lock_num == 1, "The cpu hold more than 1 lock during switch to kernel");
+  Assert(current_proc->state != RUNNING, "The proc is running during switch to kernel");
+  Assert(GET_SSTATUS_SIE == 0, "The interrupt is on during switch to kernel");
+
+  // switch to kernel
+  bool prev_cpu_locked_status = cpu[CPU_ID].prev_lock_status;
+  context_exchange(&current_proc->user_context, &cpu[CPU_ID].cpu_context);
+  cpu[CPU_ID].prev_lock_status = prev_cpu_locked_status;
+}
+
+/**
+ * 时间片用完，切换进程
+ *
+ * @return void 无返回
+ */
+void yield() {
+  struct proc *current_proc = current_cpu_proc();
+  acquire_lock(&current_proc->proc_lock);
+  current_proc->state = RUNABLE;
+  switch2kernel();
+  release_lock(&current_proc->proc_lock);
 }

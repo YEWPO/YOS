@@ -47,7 +47,7 @@ void main() {
 
     proc_init();
 
-    user_proc_init();
+    root_proc_init();
   } else {
     while (1) {};
   }
