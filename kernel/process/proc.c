@@ -150,6 +150,9 @@ void switch2user() {
 
   current_cpu->user_proc_running = NULL;
   while (true) {
+    // make device can interrupt
+    SET_SSTATUS_SIE;
+
     for (int i = 0; i < NPROC; ++i) {
       acquire_lock(&proc[i].proc_lock);
       if (proc[i].state == RUNABLE) {
