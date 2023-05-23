@@ -4,11 +4,15 @@ QEMU = qemu-system-riscv64
 MACHINE = virt
 BIOS = default
 MEMORYSIZE = 128M
+DRIVE = file=$(IMG),if=none,format=raw,id=x0
+DEVICE = virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
 QEMUFLAGS = -machine $(MACHINE) \
 						-bios $(BIOS) \
 						-m $(MEMORYSIZE) \
-						-nographic
+						-nographic \
+						-drive $(DRIVE) \
+						-device $(DEVICE)
 
 # C compile options
 CFLAGS = -Wall -Werror -ggdb3 \
