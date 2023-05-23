@@ -55,6 +55,18 @@ sudo apt install texlive-latex-base texlive-fonts-recommended texlive-fonts-extr
 sudo apt install latex-cjk-all
 ```
 
+### 制作镜像文件
+
+```shell
+make img
+```
+
+后期可能需要将文件复制到镜像中，需要以下工具。
+
+```shell
+sudo apt install mtools
+```
+
 ## 技术设计
 
 ### 虚拟内存
