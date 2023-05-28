@@ -36,9 +36,9 @@ static pagetable_t alloc_pagetable() {
  * @param pa 物理地址, 地址必须页对齐
  * @param flags 标志位, 低9位有效
  *
- * @return 成功返回1，失败返回0（包括页表不存在）
+ * @return bool 成功返回1，失败返回0（包括页表不存在）
  */
-word_t va_map_pa(pagetable_t pagetable, addr_t va, addr_t pa, word_t flags) {
+bool va_map_pa(pagetable_t pagetable, addr_t va, addr_t pa, word_t flags) {
   Assert(va == PAGE_START(va), "va not page align");
   Assert(pa == PAGE_START(pa), "pa not page align");
 
@@ -51,7 +51,7 @@ word_t va_map_pa(pagetable_t pagetable, addr_t va, addr_t pa, word_t flags) {
       
       if (pagetable == NULL) {
         Log("va_map_pa alloc pagetable failed!");
-        return 0;
+        return false;
       }
 
       *pte = SPTE_FLAG(PA2PTE((addr_t)pagetable), V);
@@ -63,7 +63,7 @@ word_t va_map_pa(pagetable_t pagetable, addr_t va, addr_t pa, word_t flags) {
 
   pagetable[VA_VPN(va, 0)] = SPTE_FLAGS(PA2PTE(pa), flags | MPTE_FLAG(V));
 
-  return 1;
+  return true;
 }
 
 /**
@@ -73,9 +73,9 @@ word_t va_map_pa(pagetable_t pagetable, addr_t va, addr_t pa, word_t flags) {
  * @param pagetable 页表地址
  * @param va 虚拟地址, 地址必须页对齐
  *
- * @return 成功返回1, 失败返回0
+ * @return bool 成功返回1, 失败返回0
  */
-word_t va_unmap_pa(pagetable_t pagetable, addr_t va) {
+bool va_unmap_pa(pagetable_t pagetable, addr_t va) {
   Assert(va == PAGE_START(va), "va not page align");
 
   for (int i = 2; i > 0; --i) {
@@ -91,7 +91,7 @@ word_t va_unmap_pa(pagetable_t pagetable, addr_t va) {
 
   pagetable[VA_VPN(va, 0)] = 0;
 
-  return 1;
+  return true;
 }
 
 /**
@@ -102,30 +102,26 @@ word_t va_unmap_pa(pagetable_t pagetable, addr_t va) {
 void kernel_pagetable_init() {
   Log("Initializing kernel pagetable");
 
-  Log("Alloc kernel pagetable");
   kernel_pagetable = alloc_physic_page();
   Assert(kernel_pagetable != NULL, "alloc kernel pagetable failed!");
 
   // map text part
-  Log("mapping text part");
   addr_t kaddr = KERNEL_BASE;
   for (; kaddr < (addr_t)endtext; kaddr += PAGE_SIZE) {
     va_map_pa(kernel_pagetable, kaddr, kaddr, MPTE_FLAG(R) | MPTE_FLAG(X));
   }
 
   // map rodata part
-  Log("mapping rodata part");
   for (; kaddr < (addr_t)endrodata; kaddr += PAGE_SIZE) {
     va_map_pa(kernel_pagetable, kaddr, kaddr, MPTE_FLAG(R));
   }
 
   // map data part
-  Log("mapping data part");
   for (; kaddr < PHYSIC_MEM_TOP; kaddr += PAGE_SIZE) {
     va_map_pa(kernel_pagetable, kaddr, kaddr, MPTE_FLAG(R) | MPTE_FLAG(W));
   }
 
-  Log("mapping proc kernel stack");
+  // map kernel stack
   for (int i = 0; i < NPROC; ++i) {
     addr_t proc_kernel_stack_pa = (addr_t)alloc_physic_page();
     Assert(proc_kernel_stack_pa != 0, "alloc proc kernel stack failed!");
@@ -136,8 +132,10 @@ void kernel_pagetable_init() {
   }
 
   // map trampoline part
-  Log("mapping trampoline section");
   va_map_pa(kernel_pagetable, TRAMPOLINE, (addr_t)trampoline, MPTE_FLAG(R) | MPTE_FLAG(X));
+
+  // map virtio
+  va_map_pa(kernel_pagetable, VIRTIO_MMIO, VIRTIO_MMIO, MPTE_FLAG(R) | MPTE_FLAG(X));
 
   Log("Initialized kernel pagetable");
 }
