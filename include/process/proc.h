@@ -76,10 +76,16 @@ enum proc_state {
 struct proc {
   struct spinlock proc_lock;
 
+  // proc_lock needed
   enum proc_state state;
+  void *sleep_lock;
   int pid;
 
+  // wait_lock needed
+  struct proc *parent;
+
   addr_t proc_kernel_stack;
+  size_t memory_size;
   pagetable_t user_pagetable;
   struct trapframe *user_trapframe;
   struct context user_context;
