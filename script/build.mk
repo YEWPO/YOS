@@ -12,7 +12,8 @@ QEMUFLAGS = -machine $(MACHINE) \
 						-m $(MEMORYSIZE) \
 						-nographic \
 						-drive $(DRIVE) \
-						-device $(DEVICE)
+						-device $(DEVICE) \
+						-global virtio-mmio.force-legacy=false
 
 # C compile options
 CFLAGS = -Wall -Werror -ggdb3 \
