@@ -10,6 +10,7 @@
 
 #include "process/proc.h"
 #include "process/cpu.h"
+#include "process/trans.h"
 
 #include "lock/spinlock.h"
 
