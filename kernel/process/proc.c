@@ -186,7 +186,7 @@ void switch2user() {
 void switch2kernel() {
   struct proc *current_proc = current_cpu_proc();
 
-  Assert(is_locked(&current_proc->proc_lock), "The proc lock isn't hold during switch to kernel");
+  Assert(spinlock_is_locked(&current_proc->proc_lock), "The proc lock isn't hold during switch to kernel");
   Assert(cpu[CPU_ID].lock_num == 1, "The cpu hold more than 1 lock during switch to kernel");
   Assert(current_proc->state != RUNNING, "The proc is running during switch to kernel");
   Assert(GET_SSTATUS_SIE == 0, "The interrupt is on during switch to kernel");

@@ -10,8 +10,10 @@
 
 #include "process/proc.h"
 #include "process/cpu.h"
+#include "process/trans.h"
 
 #include "lock/spinlock.h"
+#include "lock/sleeplock.h"
 
 #include "riscv64.h"
 

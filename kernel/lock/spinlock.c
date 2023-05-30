@@ -3,7 +3,13 @@
 #include "common.h"
 #include "macro.h"
 
-bool is_locked(struct spinlock *lock) {
+/**
+ * 檢查該鎖是否被鎖上
+ *
+ * @return bool 鎖上返回true
+ * 未被鎖上返回false
+ */
+bool spinlock_is_locked(struct spinlock *lock) {
   return lock->is_locked;
 }
 
@@ -52,7 +58,7 @@ void pop_lock() {
 void acquire_lock(struct spinlock *lock) {
   push_lock();
 
-  Assert(!is_locked(lock), "The lock is hold when acquire this lock!");
+  Assert(!spinlock_is_locked(lock), "The lock is hold when acquire this lock!");
 
   while(__sync_lock_test_and_set(&lock->is_locked, true) != 0);
 
@@ -67,7 +73,7 @@ void acquire_lock(struct spinlock *lock) {
  * @return void 释放到锁之后无返回
  */
 void release_lock(struct spinlock *lock) {
-  Assert(is_locked(lock), "The lock is not hold when release this lock!");
+  Assert(spinlock_is_locked(lock), "The lock is not hold when release this lock!");
 
   __sync_synchronize();
 
