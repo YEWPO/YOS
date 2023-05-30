@@ -13,6 +13,7 @@
 #include "process/trans.h"
 
 #include "lock/spinlock.h"
+#include "lock/sleeplock.h"
 
 #include "riscv64.h"
 
