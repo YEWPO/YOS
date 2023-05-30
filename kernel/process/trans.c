@@ -4,6 +4,14 @@
 
 extern struct proc proc[NPROC];
 
+/**
+ * 讓一個進程睡眠
+ *
+ * @param sleeplock 睡眠鎖
+ * @param spinlock 睡眠锁的自旋锁
+ *
+ * @return void 无返回
+ */
 void sleep(void *sleeplock, struct spinlock *spinlock) {
   struct proc *current_proc = current_cpu_proc();
 
@@ -21,6 +29,13 @@ void sleep(void *sleeplock, struct spinlock *spinlock) {
   acquire_lock(spinlock);
 }
 
+/**
+ * 释放在睡眠锁上休眠的所有进程
+ *
+ * @param sleeplock 睡眠锁
+ *
+ * @return void 无返回
+ */
 void wakeup(void *sleeplock) {
   for (int i = 0; i < NPROC; ++i) {
     if (&proc[i] != current_cpu_proc()) {

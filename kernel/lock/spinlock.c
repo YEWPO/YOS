@@ -3,6 +3,12 @@
 #include "common.h"
 #include "macro.h"
 
+/**
+ * 檢查該鎖是否被鎖上
+ *
+ * @return bool 鎖上返回true
+ * 未被鎖上返回false
+ */
 bool spinlock_is_locked(struct spinlock *lock) {
   return lock->is_locked;
 }
