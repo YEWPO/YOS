@@ -135,7 +135,7 @@ void kernel_pagetable_init() {
   va_map_pa(kernel_pagetable, TRAMPOLINE, (addr_t)trampoline, MPTE_FLAG(R) | MPTE_FLAG(X));
 
   // map virtio
-  va_map_pa(kernel_pagetable, VIRTIO_MMIO, VIRTIO_MMIO, MPTE_FLAG(R) | MPTE_FLAG(X));
+  va_map_pa(kernel_pagetable, VIRTIO_MMIO, VIRTIO_MMIO, MPTE_FLAG(R) | MPTE_FLAG(W));
 
   Log("Initialized kernel pagetable");
 }
