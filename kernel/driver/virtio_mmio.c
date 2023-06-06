@@ -22,6 +22,4 @@ void device_init() {
   // set driver bit
   status |= DEVICE_STATUS_DRIVER;
   *VIRTIO_MMIO_REG(MMIO_STATUS) = status;
-
-  Log("Device features: %lx", *VIRTIO_MMIO_REG(MMIO_DEVICE_FEATURES));
 }

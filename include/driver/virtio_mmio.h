@@ -44,7 +44,29 @@
 #define DEVICE_STATUS_DRIVER_OK   4
 #define DEVICE_STATUS_NEEDS_RESET 64
 
-// read mmio resgister macro
+// block device features
+#define VIRTIO_F_SZIE_MAX         1
+#define VIRTIO_F_SEG_MAX          2
+#define VIRTIO_F_GEOMETRY         4
+#define VIRTIO_BLK_F_RO           5
+#define VIRTIO_BLK_F_BLK_SIZE     6
+#define VIRTIO_BLK_F_FLUSH        9
+#define VIRTIO_BLK_F_TOPOLOGY     10
+#define VIRTIO_BLK_F_CONFIG_WCK   11
+#define VIRTIO_BLK_F_MQ           12
+#define VIRTIO_BLK_F_DISCARD      13
+#define VIRTIO_BLK_F_WRITE_ZEROES 14
+#define VIRTIO_BLK_F_LIFETIME     15
+#define VIRTIO_BLK_F_SECURE_ERASE 16
+#define VIRTIO_F_INDIRECT_DESC    28
+#define VIRTIO_F_EVENT_IDX        29
+
+/// clear device feature
+#define CLEAR_DEVICE_FEATURE(feature, bit) (feature & ~(1 << bit))
+/// set device feature
+#define SET_DEVICE_FEATURE(feature, bit) (feature | (1 << bit))
+
+/// read mmio resgister macro
 #define VIRTIO_MMIO_REG(name) ((volatile uint32_t *)(VIRTIO_MMIO + (name)))
 
 void device_init();
