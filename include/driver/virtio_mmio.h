@@ -1,6 +1,9 @@
 #ifndef _VIRTIO_MMIO_H
 #define _VIRTIO_MMIO_H
 
+#include "memory/vmlayout.h"
+#include <stdint.h>
+
 // MMIO Device Register Layout
 #define MMIO_MAGIC_VALUE         0x000
 #define MMIO_VERSION             0x004
@@ -32,5 +35,8 @@
 #define MMIO_QUEUE_RESET         0x0c0
 #define MMIO_CONFIG_GENERATION   0x0fc
 #define MMIO_CONFIG              0x100
+
+// read mmio resgister macro
+#define VIRTIO_MMIO_REG(name) ((volatile uint32_t *)(VIRTIO_MMIO + (name)))
 
 #endif
