@@ -22,4 +22,19 @@ void device_init() {
   // set driver bit
   status |= DEVICE_STATUS_DRIVER;
   *VIRTIO_MMIO_REG(MMIO_STATUS) = status;
+
+  // set device features
+  uint64_t features = *VIRTIO_MMIO_REG(MMIO_DEVICE_FEATURES);
+  features = CLEAR_BIT(features, VIRTIO_BLK_F_CONFIG_WCK);
+  features = CLEAR_BIT(features, VIRTIO_F_INDIRECT_DESC);
+  features = CLEAR_BIT(features, VIRTIO_F_EVENT_IDX);
+  *VIRTIO_MMIO_REG(MMIO_DEVICE_FEATURES) = features;
+
+  // set feature_ok bit
+  status |= DEVICE_STATUS_FEATURES_OK;
+  *VIRTIO_MMIO_REG(MMIO_STATUS) = status;
+
+  status = *VIRTIO_MMIO_REG(MMIO_STATUS);
+  Assert((status & DEVICE_STATUS_FEATURES_OK) == DEVICE_STATUS_FEATURES_OK,
+      "Device feature write failed!");
 }

@@ -61,11 +61,6 @@
 #define VIRTIO_F_INDIRECT_DESC    28
 #define VIRTIO_F_EVENT_IDX        29
 
-/// clear device feature
-#define CLEAR_DEVICE_FEATURE(feature, bit) (feature & ~(1 << bit))
-/// set device feature
-#define SET_DEVICE_FEATURE(feature, bit) (feature | (1 << bit))
-
 /// read mmio resgister macro
 #define VIRTIO_MMIO_REG(name) ((volatile uint32_t *)(VIRTIO_MMIO + (name)))
 
