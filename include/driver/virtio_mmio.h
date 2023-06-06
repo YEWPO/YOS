@@ -36,7 +36,17 @@
 #define MMIO_CONFIG_GENERATION   0x0fc
 #define MMIO_CONFIG              0x100
 
+// device status
+#define DEVICE_STATUS_ACKNOWLEDGE 1
+#define DEVICE_STATUS_DRIVER      2
+#define DEVICE_STATUS_FAILED      128
+#define DEVICE_STATUS_FEATURES_OK 8
+#define DEVICE_STATUS_DRIVER_OK   4
+#define DEVICE_STATUS_NEEDS_RESET 64
+
 // read mmio resgister macro
 #define VIRTIO_MMIO_REG(name) ((volatile uint32_t *)(VIRTIO_MMIO + (name)))
+
+void device_init();
 
 #endif
