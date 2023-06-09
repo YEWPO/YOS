@@ -16,6 +16,7 @@
 #include "lock/sleeplock.h"
 
 #include "driver/virtio_mmio.h"
+#include "driver/virtio_queue.h"
 
 #include "riscv64.h"
 
