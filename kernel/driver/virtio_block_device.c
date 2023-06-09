@@ -87,8 +87,18 @@ void test() {
   new_req.status = -1;
  
   device_virtq.desc[0].addr = (uint64_t)&new_req;
-  device_virtq.desc[0].len = sizeof(struct virtio_blk_req);
-  device_virtq.desc[0].flags = 0;
+  device_virtq.desc[0].len = 16;
+  device_virtq.desc[0].flags = VIRTIO_DESC_F_NEXT;
+  device_virtq.desc[0].next = 1;
+
+  device_virtq.desc[1].addr = (uint64_t)&new_req.data;
+  device_virtq.desc[1].len = SECTOR_SIZE;
+  device_virtq.desc[1].flags = VIRTIO_DESC_F_NEXT;
+  device_virtq.desc[1].next = 2;
+
+  device_virtq.desc[2].addr = (uint64_t)&new_req.status;
+  device_virtq.desc[2].len = 1;
+  device_virtq.desc[2].flags = VIRTIO_DESC_F_WRITE;
 
   device_virtq.avail->ring[device_virtq.avail->idx % device_virtq.num] = 0;
 
@@ -99,4 +109,6 @@ void test() {
   __sync_synchronize();
 
   *VIRTIO_MMIO_REG(MMIO_QUEUE_NOTIFY) = 0;
+
+  while (true);
 }

@@ -48,6 +48,7 @@ void main() {
     proc_init();
 
     device_init();
+    test();
 
     root_proc_init();
   } else {
