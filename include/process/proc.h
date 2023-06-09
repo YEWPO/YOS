@@ -78,7 +78,7 @@ struct proc {
 
   // proc_lock needed
   enum proc_state state;
-  void *sleep_lock;
+  void *sleep_condition;
   int pid;
 
   // wait_lock needed

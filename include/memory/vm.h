@@ -55,8 +55,8 @@ typedef uint64_t *pagetable_t;
 typedef uint64_t pte_t;
 
 void satp_init();
-word_t va_map_pa(pagetable_t pagetable, addr_t va, addr_t pa, addr_t flags);
-word_t va_unmap_pa(pagetable_t pagetable, addr_t va);
+bool va_map_pa(pagetable_t pagetable, addr_t va, addr_t pa, addr_t flags);
+bool va_unmap_pa(pagetable_t pagetable, addr_t va);
 void kernel_pagetable_init();
 void free_pagetable(pagetable_t pagetable);
 addr_t va2pa(pagetable_t pagetable, addr_t va);
