@@ -10,6 +10,8 @@
 #define VIRTQ_USED_F_NO_NOTIFY      1
 #define VIRTQ_AVAIL_F_NO_INTERRUPT  1
 
+#define VIRTQ_NUM 8
+
 struct virtq_desc {
   uint64_t addr;
   uint32_t len;
@@ -20,7 +22,7 @@ struct virtq_desc {
 struct virtq_avail {
   uint16_t flags;
   uint16_t idx;
-  uint16_t ring[];
+  uint16_t ring[VIRTQ_NUM];
 #ifdef USE_VIRTIO_F_EVENT_IDX
   uint16_t used_event;
 #endif
@@ -34,7 +36,7 @@ struct virtq_used_elem {
 struct virtq_used {
   uint16_t flags;
   uint16_t idx;
-  struct virtq_used_elem ring[];
+  struct virtq_used_elem ring[VIRTQ_NUM];
 #ifdef USE_VIRTIO_F_EVENT_IDX
   uint16_t avail_event;
 #endif
