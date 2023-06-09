@@ -2,6 +2,8 @@
 #include "kernel.h"
 #include "macro.h"
 
+struct virtq device_virtq;
+
 void device_init() {
   Log("Initalizing mmio device");
 
@@ -14,7 +16,7 @@ void device_init() {
 
   // set zero to reset the device
   *VIRTIO_MMIO_REG(MMIO_STATUS) = status;
-  
+
   // set acknowledge bit
   status |= DEVICE_STATUS_ACKNOWLEDGE;
   *VIRTIO_MMIO_REG(MMIO_STATUS) = status;
@@ -37,4 +39,10 @@ void device_init() {
   status = *VIRTIO_MMIO_REG(MMIO_STATUS);
   Assert((status & DEVICE_STATUS_FEATURES_OK) == DEVICE_STATUS_FEATURES_OK,
       "Device feature write failed!");
+
+  device_virtq.num = *VIRTIO_MMIO_REG(MMIO_QUEUE_NUM_MAX);
+
+  Assert(device_virtq.num != 0, "Virtio queue num error!");
+
+  *VIRTIO_MMIO_REG(MMIO_QUEUE_NUM) = device_virtq.num;
 }

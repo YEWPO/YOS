@@ -61,9 +61,4 @@
 #define VIRTIO_F_INDIRECT_DESC    28
 #define VIRTIO_F_EVENT_IDX        29
 
-/// read mmio resgister macro
-#define VIRTIO_MMIO_REG(name) ((volatile uint32_t *)(VIRTIO_MMIO + (name)))
-
-void device_init();
-
 #endif
