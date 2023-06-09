@@ -4,6 +4,11 @@
 
 struct virtq device_virtq;
 
+/**
+ * 初始化设备参数
+ *
+ * @return void 无返回
+ */
 void device_init() {
   Log("Initalizing mmio device");
 
@@ -40,6 +45,10 @@ void device_init() {
   Assert((status & DEVICE_STATUS_FEATURES_OK) == DEVICE_STATUS_FEATURES_OK,
       "Device feature write failed!");
 
+  // Initalizing queue
+  *VIRTIO_MMIO_REG(MMIO_QUEUE_SEL) = 0;
+  Assert(*VIRTIO_MMIO_REG(MMIO_QUEUE_READY) == 0, "Initalizing device queue cannot ready!");
+
   int virtq_maxnum = *VIRTIO_MMIO_REG(MMIO_QUEUE_NUM_MAX);
 
   Assert(virtq_maxnum >= VIRTQ_NUM, "Virtio queue num error!");
@@ -60,11 +69,34 @@ void device_init() {
   *VIRTIO_MMIO_REG(MMIO_QUEUE_DEVICE_LOW) = (uint64_t)device_virtq.used;
   *VIRTIO_MMIO_REG(MMIO_QUEUE_DEVICE_HIGH) = (uint64_t)device_virtq.used >> 32;
 
+  // queue is ready
   *VIRTIO_MMIO_REG(MMIO_QUEUE_READY) = 0x1;
 
+  // update device status for ready
   status |= DEVICE_STATUS_DRIVER_OK;
-
   *VIRTIO_MMIO_REG(MMIO_STATUS) = status;
 
   Log("Initalized device!");
+}
+
+struct virtio_blk_req new_req;
+
+void test() {
+  new_req.type = VIRTIO_BLK_T_IN;
+  new_req.sector = 0;
+  new_req.status = -1;
+ 
+  device_virtq.desc[0].addr = (uint64_t)&new_req;
+  device_virtq.desc[0].len = sizeof(struct virtio_blk_req);
+  device_virtq.desc[0].flags = 0;
+
+  device_virtq.avail->ring[device_virtq.avail->idx % device_virtq.num] = 0;
+
+  __sync_synchronize();
+
+  device_virtq.avail->idx++;
+
+  __sync_synchronize();
+
+  *VIRTIO_MMIO_REG(MMIO_QUEUE_NOTIFY) = 0;
 }
