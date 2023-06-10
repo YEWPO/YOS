@@ -83,6 +83,13 @@ void kernel_trap_handler() {
 
       Log("the interrupt of device is: %d", irq);
 
+      if (irq == VIRTIO_IRQ) {
+        virtio_interrupt_handler();
+      } else {
+        // Unknown device
+        Assert(0, "Unknown device!");
+      }
+
       SET_COMPLETION_REG(SUPERVISOR_CONTEXT, irq);
     } else {
       // an interrupt not implement

@@ -113,3 +113,9 @@ void test() {
 
   while (true);
 }
+
+void virtio_interrupt_handler() {
+  for (int i = 0; i < SECTOR_SIZE; ++i) {
+    printf("read id %d's value %x\n",i, new_req.data[i]);
+  }
+}
