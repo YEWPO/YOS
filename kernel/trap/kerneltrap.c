@@ -70,12 +70,30 @@ void kernel_trap_handler() {
     uint64_t exception = GET_EXCEPTION(scause);
 
     if (exception == STI) {
+      // a timer interrupt
       timer_handler();
 
       // yield
       if (current_cpu_proc() != NULL && current_cpu_proc()->state == RUNNING) {
         yield();
       }
+    } else if (exception == SEI) {
+      // a device interrupt
+      int irq = GET_CLAIM_REG(SUPERVISOR_CONTEXT);
+
+      Log("the interrupt of device is: %d", irq);
+
+      if (irq == VIRTIO_IRQ) {
+        virtio_interrupt_handler();
+      } else {
+        // Unknown device
+        Assert(0, "Unknown device!");
+      }
+
+      SET_COMPLETION_REG(SUPERVISOR_CONTEXT, irq);
+    } else {
+      // an interrupt not implement
+      Assert(0, "kernel trap need to implement!");
     }
   } else {
     // not an interrupt

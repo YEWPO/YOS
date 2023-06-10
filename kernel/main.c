@@ -44,8 +44,11 @@ void main() {
     satp_init();
 
     kernel_trap_init();
+    plic_init();
 
     proc_init();
+
+    device_init();
 
     root_proc_init();
   } else {

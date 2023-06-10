@@ -7,11 +7,18 @@
 
 #include "trap/kerneltrap.h"
 #include "trap/usertrap.h"
+#include "trap/plic.h"
 
 #include "process/proc.h"
 #include "process/cpu.h"
+#include "process/trans.h"
 
 #include "lock/spinlock.h"
+#include "lock/sleeplock.h"
+
+#include "driver/virtio_mmio.h"
+#include "driver/virtio_queue.h"
+#include "driver/virtio_block_device.h"
 
 #include "riscv64.h"
 

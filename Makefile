@@ -14,6 +14,8 @@ OBJDUMP = $(TOOLPREFIX)objdump
 K = $(WORKDIR)/kernel
 U = $(WORKDIR)/user
 
+IMG = $(WORKDIR)/fat32.img
+
 SCRIPTDIR = $(WORKDIR)/script
 
 # clean project not needed files

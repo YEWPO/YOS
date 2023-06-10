@@ -17,4 +17,11 @@
 /// 用户进程内核栈的栈底地址
 #define PROC_KERNEL_STACK(index) (TRAMPOLINE - (index + 1) * 2 * PAGE_SIZE)
 
+/// virtio的内存空间地址
+#define VIRTIO_MMIO 0x10001000
+
+/// plic的内存空间地址
+#define PLIC 0xc000000
+#define PLIC_END 0x10000000
+
 #endif

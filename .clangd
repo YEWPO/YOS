@@ -8,5 +8,5 @@ CompileFlags:
     -nostdlib,
     -mno-relax,
     -mcmodel=medany,
-    -I/home/yewpo/Desktop/test/YOS/include]
+    -I/home/yewpo/Desktop/project/YOS/include]
   Compiler: riscv-linux-gnu-gcc
