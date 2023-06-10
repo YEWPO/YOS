@@ -44,7 +44,7 @@ void main() {
     satp_init();
 
     kernel_trap_init();
-    plic_init();
+    // plic_init();
 
     proc_init();
 

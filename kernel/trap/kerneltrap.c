@@ -76,6 +76,9 @@ void kernel_trap_handler() {
       if (current_cpu_proc() != NULL && current_cpu_proc()->state == RUNNING) {
         yield();
       }
+    } else {
+      // an interrupt not implement
+      Assert(0, "kernel trap need to implement!");
     }
   } else {
     // not an interrupt

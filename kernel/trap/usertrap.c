@@ -35,6 +35,9 @@ void user_trap_handler() {
 
       // yield
       yield();
+    } else {
+      // an interrupt not implement
+      Assert(0, "user trap need to implement!");
     }
   } else {
     // not an interrupt
