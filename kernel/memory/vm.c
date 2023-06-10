@@ -137,6 +137,11 @@ void kernel_pagetable_init() {
   // map virtio
   va_map_pa(kernel_pagetable, VIRTIO_MMIO, VIRTIO_MMIO, MPTE_FLAG(R) | MPTE_FLAG(W));
 
+  kaddr = PLIC;
+  for (; kaddr < PLIC_END; kaddr += PAGE_SIZE) {
+    va_map_pa(kernel_pagetable, kaddr, kaddr, MPTE_FLAG(R) | MPTE_FLAG(W));
+  }
+
   Log("Initialized kernel pagetable");
 }
 

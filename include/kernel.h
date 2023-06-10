@@ -7,6 +7,7 @@
 
 #include "trap/kerneltrap.h"
 #include "trap/usertrap.h"
+#include "trap/plic.h"
 
 #include "process/proc.h"
 #include "process/cpu.h"
