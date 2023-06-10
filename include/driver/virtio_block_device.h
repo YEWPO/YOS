@@ -27,6 +27,5 @@ struct virtio_blk_req {
 
 void device_init();
 void virtio_interrupt_handler();
-void test();
 
 #endif

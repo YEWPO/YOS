@@ -81,41 +81,10 @@ void device_init() {
 
 struct virtio_blk_req new_req;
 
-void test() {
-  new_req.type = VIRTIO_BLK_T_IN;
-  new_req.sector = 0;
-  new_req.status = -1;
- 
-  device_virtq.desc[0].addr = (uint64_t)&new_req;
-  device_virtq.desc[0].len = 16;
-  device_virtq.desc[0].flags = VIRTIO_DESC_F_NEXT;
-  device_virtq.desc[0].next = 1;
-
-  device_virtq.desc[1].addr = (uint64_t)&new_req.data;
-  device_virtq.desc[1].len = SECTOR_SIZE;
-  device_virtq.desc[1].flags = VIRTIO_DESC_F_NEXT;
-  device_virtq.desc[1].flags |= VIRTIO_DESC_F_WRITE;
-  device_virtq.desc[1].next = 2;
-
-  device_virtq.desc[2].addr = (uint64_t)&new_req.status;
-  device_virtq.desc[2].len = 1;
-  device_virtq.desc[2].flags = VIRTIO_DESC_F_WRITE;
-
-  device_virtq.avail->ring[device_virtq.avail->idx % device_virtq.num] = 0;
-
-  __sync_synchronize();
-
-  device_virtq.avail->idx++;
-
-  __sync_synchronize();
-
-  *VIRTIO_MMIO_REG(MMIO_QUEUE_NOTIFY) = 0;
-
-  while (true);
-}
-
+/**
+ * virito设备中断处理程序
+ *
+ * @return void 无返回
+ */
 void virtio_interrupt_handler() {
-  for (int i = 0; i < SECTOR_SIZE; ++i) {
-    printf("read id %d's value %x\n",i, new_req.data[i]);
-  }
 }
