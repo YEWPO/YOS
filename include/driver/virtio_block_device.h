@@ -26,6 +26,6 @@ struct virtio_blk_req {
 #define VIRTIO_MMIO_REG(name) ((volatile uint32_t *)(VIRTIO_MMIO + (name)))
 
 void device_init();
-void test();
+void virtio_interrupt_handler();
 
 #endif
