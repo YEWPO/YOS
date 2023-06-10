@@ -8,6 +8,11 @@
 /// virtio interrupt request id, get from qemu --dumpdtb
 #define VIRTIO_IRQ 0x1
 
+/// machine context id
+#define MACHINE_CONTEXT 0x0
+/// supervisor context id
+#define SUPERVISOR_CONTEXT 0x1
+
 // plic registers offset
 #define INTERRUPT_SOURCE_PRIORITY 0x0
 #define INTERRUPT_PENDING_BITS    0x1000
@@ -18,6 +23,9 @@
 
 /// read or write plic registers
 #define PLIC_REG(addr) ((volatile uint32_t *)(PLIC + addr))
+
+/// numask all the interrupt
+#define PLIC_NO_MASK 0x0
 
 /// set source priority
 #define SET_SOURCE_PRIORITY(irq) (*PLIC_REG(INTERRUPT_SOURCE_PRIORITY + irq * 4) = 0x1)
