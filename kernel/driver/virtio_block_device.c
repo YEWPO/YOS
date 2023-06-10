@@ -94,6 +94,7 @@ void test() {
   device_virtq.desc[1].addr = (uint64_t)&new_req.data;
   device_virtq.desc[1].len = SECTOR_SIZE;
   device_virtq.desc[1].flags = VIRTIO_DESC_F_NEXT;
+  device_virtq.desc[1].flags |= VIRTIO_DESC_F_WRITE;
   device_virtq.desc[1].next = 2;
 
   device_virtq.desc[2].addr = (uint64_t)&new_req.status;
