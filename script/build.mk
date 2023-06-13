@@ -24,6 +24,10 @@ INCLUDEFLAG =  $(addprefix -I, $(INCLUDEPATH))
 CFLAGS += $(INCLUDEFLAG)
 ASFLAGS += -MD $(INCLUDEFLAG)
 
+ifdef DEBUG
+CFLAGS += -DDEBUG
+endif
+
 # kernel info
 KERNELSRC = $(shell find $(K) -name "*.c")
 KERNELASM = $(shell find $(K) -name "*.S")
