@@ -62,7 +62,7 @@ run: $(KERNELBIN)
 
 # debug options
 QEMUGDBFLAGS = -S -gdb \
-							 tcp::26000
+							 tcp::27000
 
 # run debug
 gdb: $(KERNELBIN)
