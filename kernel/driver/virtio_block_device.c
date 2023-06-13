@@ -3,6 +3,7 @@
 #include "macro.h"
 
 struct virtq device_virtq;
+struct spinlock block_device_lock;
 
 /**
  * 初始化设备参数
@@ -79,12 +80,15 @@ void device_init() {
   Log("Initalized device!");
 }
 
-struct virtio_blk_req new_req;
-
 /**
  * virito设备中断处理程序
  *
  * @return void 无返回
  */
 void virtio_interrupt_handler() {
+  acquire_lock(&block_device_lock);
+
+  *VIRTIO_MMIO_REG(MMIO_INTERRUPT_ACK) = BITS(*VIRTIO_MMIO_REG(MMIO_INTERRUPT_STATUS), 1, 0);
+
+  release_lock(&block_device_lock);
 }
