@@ -15,9 +15,13 @@ static inline void panic() {
 }
 
 /// 打印日志信息
+#ifdef DEBUG
 #define Log(format, ...) \
   printf(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_BLUE) "\n", \
     __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+#else
+#define Log(format, ...) {}
+#endif
 
 /// Assert的变种实现
 #define Assert(cond, format, ...) do { \

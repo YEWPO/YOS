@@ -4,7 +4,7 @@ define hook-quit
 end
 
 # connect remote
-target remote localhost:26000
+target remote localhost:27000
 file build/kernel.bin
 break *0x80200000
 continue

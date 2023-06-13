@@ -24,6 +24,10 @@ INCLUDEFLAG =  $(addprefix -I, $(INCLUDEPATH))
 CFLAGS += $(INCLUDEFLAG)
 ASFLAGS += -MD $(INCLUDEFLAG)
 
+ifdef DEBUG
+CFLAGS += -DDEBUG
+endif
+
 # kernel info
 KERNELSRC = $(shell find $(K) -name "*.c")
 KERNELASM = $(shell find $(K) -name "*.S")
@@ -58,7 +62,7 @@ run: $(KERNELBIN)
 
 # debug options
 QEMUGDBFLAGS = -S -gdb \
-							 tcp::26000
+							 tcp::27000
 
 # run debug
 gdb: $(KERNELBIN)

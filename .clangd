@@ -1,6 +1,7 @@
 CompileFlags:
   Add: [-Wall,
     -Werror,
+    -DDEBUG,
     -ggdb3,
     -MD,
     -ffreestanding,
