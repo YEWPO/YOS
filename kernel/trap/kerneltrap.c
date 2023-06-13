@@ -5,37 +5,6 @@
 
 extern void kernelvec();
 
-// timer gap
-#define INTERRUPT_TIME 0x100000l
-
-/**
- * read current time
- *
- * @return uint64_t current time
- */
-static uint64_t read_time() {
-  return READ_CSR(, time);
-}
-
-/**
- * set next timer_interrupt time
- *
- * @return void no return
- */
-static void set_next_timer() {
-  sbi_set_timer(read_time() + INTERRUPT_TIME);
-}
-
-/**
- * handle timer interrupt
- *
- * @return no return 
- */
-void timer_handler() {
-  Log("Timer Interrupt!");
-  set_next_timer();
-}
-
 /**
  * initialize kernel_trap
  *
