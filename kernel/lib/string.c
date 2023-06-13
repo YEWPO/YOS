@@ -34,20 +34,23 @@ void *memcpy(void *dest, const void* src, size_t n) {
  * @return void* 目标内存地址
  */
 void *memmove(void *dest, const void* src, size_t n) {
-  char tmp[n];
-  const char* s = src;
-  char* d = dest;
+  const char *s = src;
+  char *d = dest;
 
-  size_t i = 0;
-  while (i < n) {
-    tmp[i] = s[i];
-    i++;
-  }
+  size_t i;
 
-  i = 0;
-  while (i < n) {
-    d[i] = tmp[i];
-    i++;
+  if (dest <= src) {
+    i = 0;
+    while (i < n) {
+     d[i] = s[i];
+     i++;
+    }
+  } else {
+    i = n;
+    while (i > 0) {
+      d[i] = s[i];
+      i--;
+    }
   }
 
   return d;
