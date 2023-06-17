@@ -227,6 +227,8 @@ void device_write(struct buffer_block *buffer) {
  * @return void 无返回
  */
 void virtio_interrupt_handler() {
+  Log("Block device interrupt!");
+
   acquire_lock(&block_device_lock);
 
   while (handled_idx != device_virtq.used->idx) {
