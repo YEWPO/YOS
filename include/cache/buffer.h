@@ -29,4 +29,8 @@ struct buffer_block {
 
 extern struct buffer_block buffers[NBUFFER];
 
+struct buffer_block *buffer_acquire(uint32_t device_id, uint32_t sector_id);
+void buffer_update(struct buffer_block *buffer);
+void buffer_release(struct buffer_block *buffer);
+
 #endif
