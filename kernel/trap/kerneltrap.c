@@ -32,12 +32,10 @@ void kernel_trap_handler() {
   uint64_t scause = READ_CSR(s, cause);
   uint64_t sstatus = READ_CSR(s, status);
   uint64_t sepc = READ_CSR(s, epc);
+  uint64_t exception = GET_EXCEPTION(scause);
 
   if (GET_INTERRUPT(scause)) {
     // an interrupt
-
-    uint64_t exception = GET_EXCEPTION(scause);
-
     if (exception == STI) {
       // a timer interrupt
       timer_handler();
