@@ -5,6 +5,15 @@
 struct virtq device_virtq;
 struct spinlock block_device_lock;
 
+// 设备正在处理的事件信息
+struct {
+  struct buffer_block *buffer;
+  bool status;
+} device_event[VIRTQ_NUM];
+
+// 已经处理过的事件编号
+uint16_t handled_idx;
+
 /**
  * 初始化设备参数
  *
@@ -88,7 +97,20 @@ void device_init() {
 void virtio_interrupt_handler() {
   acquire_lock(&block_device_lock);
 
+  while (handled_idx != device_virtq.used->idx) {
+    __sync_synchronize();
+
+    uint32_t event_idx = device_virtq.used->ring[handled_idx % VIRTQ_NUM].id;
+    Assert(device_event[event_idx].status == 0, "Something Wrong with device read/write!");
+
+    device_event[event_idx].buffer->dirty = false;
+    wakeup(device_event[event_idx].buffer);
+
+    handled_idx++;
+  }
+
   *VIRTIO_MMIO_REG(MMIO_INTERRUPT_ACK) = BITS(*VIRTIO_MMIO_REG(MMIO_INTERRUPT_STATUS), 1, 0);
+  __sync_synchronize();
 
   release_lock(&block_device_lock);
 }
