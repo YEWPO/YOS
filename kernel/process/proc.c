@@ -135,7 +135,7 @@ void root_proc_init() {
   root_proc = alloc_proc();
 
   root_proc->user_trapframe->user_pc = 0;
-  root_proc->user_trapframe->proc_kernel_sp = PAGE_SIZE;
+  root_proc->user_trapframe->x2 = PAGE_SIZE;
 
   // 为用户进程分配空间并且分配标志位
   void *user_code_page = alloc_physic_page();
