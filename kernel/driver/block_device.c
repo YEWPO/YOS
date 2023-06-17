@@ -17,6 +17,8 @@ uint16_t handled_idx;
 uint16_t free_descriptor_stack[VIRTQ_NUM];
 int free_descriptor_stack_top;
 
+struct virtio_blk_req operation_req[VIRTQ_NUM];
+
 /**
  * 初始化设备参数
  *
@@ -89,6 +91,7 @@ void device_init() {
   status |= DEVICE_STATUS_DRIVER_OK;
   *VIRTIO_MMIO_REG(MMIO_STATUS) = status;
 
+  // init descriptor stack
   for (int i = 0; i < VIRTQ_NUM; ++i) {
     free_descriptor_stack[free_descriptor_stack_top++] = i;
   }
@@ -127,8 +130,10 @@ bool alloc_descriptors(uint16_t *descriptor_set) {
  */
 void free_descriptors(uint16_t *descriptor_set) {
   for (int i = 0; i < 3; ++i) {
+    memset(&device_virtq.desc[descriptor_set[i]], 0, sizeof(struct virtq_desc));
     free_descriptor_stack[free_descriptor_stack_top++] = descriptor_set[i];
   }
+  wakeup(free_descriptor_stack);
 }
 
 /**
@@ -141,6 +146,56 @@ void free_descriptors(uint16_t *descriptor_set) {
  *
  */
 void device_operation(struct buffer_block *buffer, bool write) {
+  acquire_lock(&block_device_lock);
+
+  // get descriptors
+  uint16_t descriptor_set[3];
+  while (true) {
+    if (alloc_descriptors(descriptor_set)) {
+      break;
+    }
+    sleep(free_descriptor_stack, &block_device_lock);
+  }
+
+  // init req
+  struct virtio_blk_req *req = &operation_req[descriptor_set[0]];
+
+  req->type = write ? VIRTIO_BLK_T_OUT : VIRTIO_BLK_T_IN;
+  req->reserved = 0;
+  req->sector = buffer->sector_id;
+  device_event[descriptor_set[0]].buffer = buffer;
+  device_event[descriptor_set[0]].status = 1;
+
+  device_virtq.desc[descriptor_set[0]].addr = (uint64_t)req;
+  device_virtq.desc[descriptor_set[0]].len = sizeof(struct virtio_blk_req);
+  device_virtq.desc[descriptor_set[0]].flags = VIRTIO_DESC_F_NEXT;
+  device_virtq.desc[descriptor_set[0]].next = descriptor_set[1];
+
+  device_virtq.desc[descriptor_set[1]].addr = (uint64_t)buffer->data;
+  device_virtq.desc[descriptor_set[1]].len = SECTOR_SIZE;
+  device_virtq.desc[descriptor_set[1]].flags = write ? VIRTIO_DESC_F_WRITE : 0;
+  device_virtq.desc[descriptor_set[1]].flags |= VIRTIO_DESC_F_NEXT;
+  device_virtq.desc[descriptor_set[1]].next = descriptor_set[2];
+
+  device_virtq.desc[descriptor_set[2]].addr = (uint64_t)&device_event[descriptor_set[0]].status; 
+  device_virtq.desc[descriptor_set[2]].len = sizeof(bool);
+  device_virtq.desc[descriptor_set[2]].flags = VIRTIO_DESC_F_WRITE;
+  device_virtq.desc[descriptor_set[2]].next = 0;
+
+  device_virtq.avail->ring[device_virtq.avail->idx % VIRTQ_NUM] = descriptor_set[0];
+  __sync_synchronize();
+  device_virtq.avail->idx++;
+  __sync_synchronize();
+  *VIRTIO_MMIO_REG(MMIO_QUEUE_NOTIFY) = 0;
+
+  while (buffer->dirty) {
+    sleep(buffer, &block_device_lock);
+  }
+
+  device_event[descriptor_set[0]].buffer = 0;
+  free_descriptors(descriptor_set);
+
+  release_lock(&block_device_lock);
 }
 
 /**
