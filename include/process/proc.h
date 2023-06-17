@@ -5,6 +5,7 @@
 #include "memory/vm.h"
 #include "lock/spinlock.h"
 
+/// 系统支持的最大进程数
 #define NPROC 64
 
 struct context {
