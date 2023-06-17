@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+/// 每个扇区的大小
 #define SECTOR_SIZE 512
 
 #define VIRTIO_BLK_T_IN           0
@@ -14,6 +15,7 @@
 #define VIRTIO_BLK_T_WRITE_ZEROES 13
 #define VIRTIO_BLK_T_SECURE_ERASE 14
 
+/// 块读取写入请求体
 struct virtio_blk_req {
   uint32_t type;
   uint32_t reserved;
