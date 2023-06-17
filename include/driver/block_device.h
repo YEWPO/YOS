@@ -2,9 +2,7 @@
 #define _BLOCK_DEVICE_H
 
 #include <stdint.h>
-
-/// 每个扇区的大小
-#define SECTOR_SIZE 512
+#include "cache/buffer.h"
 
 #define VIRTIO_BLK_T_IN           0
 #define VIRTIO_BLK_T_OUT          1
@@ -27,5 +25,7 @@ struct virtio_blk_req {
 
 void device_init();
 void virtio_interrupt_handler();
+void device_read(struct buffer_block *buffer);
+void device_write(struct buffer_block *buffer);
 
 #endif

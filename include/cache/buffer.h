@@ -1,8 +1,12 @@
 #ifndef _BUFFER_H
 #define _BUFFER_H
 
-#include "driver/block_device.h"
 #include <stdbool.h>
+#include <stdint.h>
+
+/// 每个扇区的大小
+#define SECTOR_SIZE 512
+
 
 /// 缓存块结构体
 struct buffer_block {

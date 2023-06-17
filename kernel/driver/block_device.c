@@ -132,6 +132,41 @@ void free_descriptors(uint16_t *descriptor_set) {
 }
 
 /**
+ * 设备读写操作
+ *
+ * @param buffer 缓冲块地址
+ * @param write 操作类型
+ *
+ * @return void 无返回
+ *
+ */
+void device_operation(struct buffer_block *buffer, bool write) {
+}
+
+/**
+ * 设备读操作
+ *
+ * @param buffer 缓冲块地址
+ *
+ * @return void 无返回
+ */
+void device_read(struct buffer_block *buffer) {
+  device_operation(buffer, false);
+}
+
+/**
+ * 设备写操作
+ *
+ * @param buffer 缓冲块地址
+ *
+ * @return void 无返回
+ */
+void device_write(struct buffer_block *buffer) {
+  device_operation(buffer, true);
+}
+
+
+/**
  * virito设备中断处理程序
  *
  * @return void 无返回
