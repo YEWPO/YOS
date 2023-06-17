@@ -240,6 +240,7 @@ void virtio_interrupt_handler() {
     Assert(device_event[event_idx].status == false, "Something Wrong with device read/write!");
 
     device_event[event_idx].buffer->dirty = false;
+    device_event[event_idx].notify = true;
     wakeup(device_event[event_idx].buffer);
 
     handled_idx++;
