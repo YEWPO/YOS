@@ -1,5 +1,5 @@
-#ifndef _VIRTIO_BLOCK_DEVICE_H
-#define _VIRTIO_BLOCK_DEVICE_H
+#ifndef _BLOCK_DEVICE_H
+#define _BLOCK_DEVICE_H
 
 #include <stdint.h>
 
