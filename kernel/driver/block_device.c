@@ -14,6 +14,9 @@ struct {
 // 已经处理过的事件编号
 uint16_t handled_idx;
 
+uint16_t free_descriptor_stack[VIRTQ_NUM];
+int free_descriptor_stack_top;
+
 /**
  * 初始化设备参数
  *
@@ -86,7 +89,46 @@ void device_init() {
   status |= DEVICE_STATUS_DRIVER_OK;
   *VIRTIO_MMIO_REG(MMIO_STATUS) = status;
 
+  for (int i = 0; i < VIRTQ_NUM; ++i) {
+    free_descriptor_stack[free_descriptor_stack_top++] = i;
+  }
+
   Log("Initalized device!");
+}
+
+/**
+ * 分配3个描述符用于一个读写事件
+ *
+ * @param descriptor_set 描述符集合的起始地址
+ * 如果分配成功，会将分配的描述符下标写入到这个集合中
+ *
+ * @return bool 成功分配返回true，分配失败返回false
+ */
+bool alloc_descriptors(uint16_t *descriptor_set) {
+  if (free_descriptor_stack_top < 3) {
+    // no enough descriptor
+    return false;
+  }
+
+  // have descriptors
+  for (int i = 0; i < 3; ++i) {
+    descriptor_set[i] = free_descriptor_stack[--free_descriptor_stack_top];
+  }
+
+  return true;
+}
+
+/**
+ * 释放3个描述符
+ *
+ * @param descriptor_set 描述符集合的起始地址
+ *
+ * @return void 无返回
+ */
+void free_descriptors(uint16_t *descriptor_set) {
+  for (int i = 0; i < 3; ++i) {
+    free_descriptor_stack[free_descriptor_stack_top++] = descriptor_set[i];
+  }
 }
 
 /**
