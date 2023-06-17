@@ -12,4 +12,8 @@ struct buffer_block {
   uint8_t data[SECTOR_SIZE];
 };
 
+#define NBUFFER 32
+
+extern struct buffer_block buffer[NBUFFER];
+
 #endif
