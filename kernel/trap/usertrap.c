@@ -63,8 +63,6 @@ void user_trap_handler() {
 
       current_proc->user_trapframe->user_pc += 4;
 
-      SET_SSTATUS_SIE;
-
       test();
     } else {
       Assert(0, "user trap need to implement!");
