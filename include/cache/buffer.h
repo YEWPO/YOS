@@ -27,6 +27,6 @@ struct buffer_block {
 /// 缓存区的大小
 #define NBUFFER 32
 
-extern struct buffer_block buffer[NBUFFER];
+extern struct buffer_block buffers[NBUFFER];
 
 #endif

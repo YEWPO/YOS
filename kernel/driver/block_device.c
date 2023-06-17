@@ -173,7 +173,7 @@ void device_operation(struct buffer_block *buffer, bool write) {
 
   device_virtq.desc[descriptor_set[1]].addr = (uint64_t)buffer->data;
   device_virtq.desc[descriptor_set[1]].len = SECTOR_SIZE;
-  device_virtq.desc[descriptor_set[1]].flags = write ? VIRTIO_DESC_F_WRITE : 0;
+  device_virtq.desc[descriptor_set[1]].flags = write ? 0 : VIRTIO_DESC_F_WRITE;
   device_virtq.desc[descriptor_set[1]].flags |= VIRTIO_DESC_F_NEXT;
   device_virtq.desc[descriptor_set[1]].next = descriptor_set[2];
 

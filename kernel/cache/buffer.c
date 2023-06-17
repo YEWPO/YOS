@@ -3,4 +3,4 @@
 #include "common.h"
 #include "macro.h"
 
-struct buffer_block buffer[NBUFFER];
+struct buffer_block buffers[NBUFFER];
