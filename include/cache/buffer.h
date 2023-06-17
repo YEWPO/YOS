@@ -1,6 +1,7 @@
 #ifndef _BUFFER_H
 #define _BUFFER_H
 
+#include "lock/sleeplock.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -22,6 +23,7 @@ struct buffer_block {
   uint32_t reference;
   // 数据区
   uint8_t data[SECTOR_SIZE];
+  struct sleeplock buffer_lock;
 };
 
 /// 缓存区的大小
