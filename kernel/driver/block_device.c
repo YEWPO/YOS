@@ -9,6 +9,7 @@ struct spinlock block_device_lock;
 struct {
   struct buffer_block *buffer;
   bool status;
+  bool notify;
 } device_event[VIRTQ_NUM];
 
 // 已经处理过的事件编号
@@ -164,7 +165,8 @@ void device_operation(struct buffer_block *buffer, bool write) {
   req->reserved = 0;
   req->sector = buffer->sector_id;
   device_event[descriptor_set[0]].buffer = buffer;
-  device_event[descriptor_set[0]].status = 1;
+  device_event[descriptor_set[0]].status = true;
+  device_event[descriptor_set[0]].notify = false;
 
   device_virtq.desc[descriptor_set[0]].addr = (uint64_t)req;
   device_virtq.desc[descriptor_set[0]].len = sizeof(struct virtio_blk_req);
@@ -188,7 +190,7 @@ void device_operation(struct buffer_block *buffer, bool write) {
   __sync_synchronize();
   *VIRTIO_MMIO_REG(MMIO_QUEUE_NOTIFY) = 0;
 
-  while (buffer->dirty) {
+  while (!device_event[descriptor_set[0]].notify) {
     sleep(buffer, &block_device_lock);
   }
 
@@ -235,9 +237,10 @@ void virtio_interrupt_handler() {
     __sync_synchronize();
 
     uint32_t event_idx = device_virtq.used->ring[handled_idx % VIRTQ_NUM].id;
-    Assert(device_event[event_idx].status == 0, "Something Wrong with device read/write!");
+    Assert(device_event[event_idx].status == false, "Something Wrong with device read/write!");
 
     device_event[event_idx].buffer->dirty = false;
+    device_event[event_idx].notify = true;
     wakeup(device_event[event_idx].buffer);
 
     handled_idx++;

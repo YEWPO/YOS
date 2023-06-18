@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include "cache/buffer.h"
 
+#define BLOCK_DEVICE 1
+
 #define VIRTIO_BLK_T_IN           0
 #define VIRTIO_BLK_T_OUT          1
 #define VIRTIO_BLK_T_FLUSH        4

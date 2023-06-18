@@ -22,7 +22,7 @@
 .global kernelvec
 .align 4
 kernelvec:
-  addi sp, sp, 32 * XLEN
+  addi sp, sp, -32 * XLEN
 
   .set n, 1
   .rept 31

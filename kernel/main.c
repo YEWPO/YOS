@@ -27,6 +27,21 @@ static void env_init() {
   WRITE_CSR(s, ie, sie);
 }
 
+static inline void logo() {
+  printf(
+  "\n"
+  "   ____     __   ,-----.       .-'''-.  \n"
+  "   \\   \\   /  /.'  .-,  '.    / _     \\ \n"
+  "    \\  _. /  '/ ,-.|  \\ _ \\  (`' )/`--' \n"
+  "     _( )_ .';  \\  '_ /  | :(_ o _).    \n"
+  " ___(_ o _)' |  _`,/ \\ _/  | (_,_). '.  \n"
+  "|   |(_,_)'  : (  '\\_/ \\   ;.---.  \\  : \n"
+  "|   `-'  /    \\ `\"/  \\  ) / \\    `-'  | \n"
+  " \\      /      '. \\_/``\".'   \\       /  \n"
+  "  `-..-'         '-----'      `-...-'   \n"
+  "\n");
+}
+
 /**
  * 操作系统主函数
  *
@@ -38,6 +53,8 @@ void main() {
   int hartid = READ_GRR(tp);
   if (hartid == 0) {
     Log("YOS starting...");
+
+    logo();
 
     physic_memory_init();
     kernel_pagetable_init();

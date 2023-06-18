@@ -2,6 +2,7 @@
 #include "kernel.h"
 #include "riscv64.h"
 #include "debug.h"
+#include "test.h"
 
 extern char trampoline[];
 extern void uservec();
@@ -26,12 +27,10 @@ void user_trap_handler() {
   current_proc->user_trapframe->user_pc = READ_CSR(s, epc);
 
   uint64_t scause = READ_CSR(s, cause);
+  uint64_t exception = GET_EXCEPTION(scause);
 
   if (GET_INTERRUPT(scause)) {
     // an interrupt
-    
-    uint64_t exception = GET_EXCEPTION(scause);
-
     if (exception == STI) {
       // a timer interrupt
       timer_handler();
@@ -58,8 +57,18 @@ void user_trap_handler() {
     }
   } else {
     // not an interrupt
-    Assert(0, "user trap need to implement!");
-    // Log("usertrap");
+
+    if (exception == CALL_FROM_U) {
+      Log("User call");
+
+      current_proc->user_trapframe->user_pc += 4;
+
+      SET_SSTATUS_SIE;
+
+      test();
+    } else {
+      Assert(0, "user trap need to implement!");
+    }
   }
 
   user_resume();
