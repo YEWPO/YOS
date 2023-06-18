@@ -22,19 +22,23 @@ struct buffer_block *buffer_acquire(uint32_t device_id, uint32_t sector_id) {
   acquire_lock(&buffers_lock);
 
   for (int i = 0; i < NBUFFER; ++i) {
-    if (buffers[i].valid && buffers[i].device_id == device_id && buffers[i].sector_id == sector_id) {
+    if (buffers[i].device_id == device_id && buffers[i].sector_id == sector_id) {
       // hit cache
       buffers[i].reference++;
       release_lock(&buffers_lock);
 
       acquire_sleeplock(&buffers[i].buffer_lock);
+      if (!buffers[i].valid) {
+        device_read(&buffers[i]);
+        buffers[i].valid = true;
+      }
       return &buffers[i];
     }
   }
 
   // not hit cache
   for (int i = 0; i < NBUFFER; ++i) {
-    if (!buffers[i].valid) {
+    if (buffers[i].reference == 0) {
       // update infomation to this new data
       buffers[i].valid = true;
       buffers[i].device_id = device_id;
@@ -47,6 +51,8 @@ struct buffer_block *buffer_acquire(uint32_t device_id, uint32_t sector_id) {
       return &buffers[i];
     }
   }
+
+  release_lock(&buffers_lock);
   
   Assert(0, "Don't have available buffer!");
 
@@ -84,9 +90,5 @@ void buffer_release(struct buffer_block *buffer) {
 
   acquire_lock(&buffers_lock);
   buffer->reference--;
-  if (buffer->reference == 0) {
-    // not use any
-    buffer->valid = false;
-  }
   release_lock(&buffers_lock);
 }
