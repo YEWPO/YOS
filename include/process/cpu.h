@@ -5,7 +5,8 @@
 #include "process/proc.h"
 #include "riscv64.h"
 
-#define NCPU 1
+/// 系统支持的最大CPU数
+#define NCPU 8
 
 struct cpu {
   struct proc *user_proc_running;

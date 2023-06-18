@@ -16,6 +16,5 @@
 #define GET_EXCEPTION(x) BITS(x, 62, 0) 
 
 void kernel_trap_init();
-void timer_handler();
 
 #endif

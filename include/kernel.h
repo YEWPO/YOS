@@ -8,6 +8,7 @@
 #include "trap/kerneltrap.h"
 #include "trap/usertrap.h"
 #include "trap/plic.h"
+#include "trap/timer.h"
 
 #include "process/proc.h"
 #include "process/cpu.h"
@@ -18,7 +19,9 @@
 
 #include "driver/virtio_mmio.h"
 #include "driver/virtio_queue.h"
-#include "driver/virtio_block_device.h"
+#include "driver/block_device.h"
+
+#include "cache/buffer.h"
 
 #include "riscv64.h"
 

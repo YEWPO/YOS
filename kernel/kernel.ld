@@ -9,6 +9,8 @@ SECTIONS
     *(entry_section)
     *(.text .text.*)
     . = ALIGN(0x1000);
+    *(user_start_section)
+    . = ALIGN(0x1000);
     *(trap_section)
   }
   . = ALIGN(0x1000);

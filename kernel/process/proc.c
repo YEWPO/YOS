@@ -124,6 +124,8 @@ static struct proc *alloc_proc() {
   return available_proc;
 }
 
+extern char user_start[];
+
 /**
  * 初始化第一各用户进程root
  *
@@ -133,13 +135,24 @@ void root_proc_init() {
   root_proc = alloc_proc();
 
   root_proc->user_trapframe->user_pc = 0;
-  root_proc->user_trapframe->proc_kernel_sp = PAGE_SIZE;
+  root_proc->user_trapframe->x2 = PAGE_SIZE;
+
+  // 为用户进程分配空间并且分配标志位
+  void *user_code_page = alloc_physic_page();
+  va_map_pa(root_proc->user_pagetable, 0, (addr_t)user_code_page, MPTE_FLAG(X) | MPTE_FLAG(W) | MPTE_FLAG(R) | MPTE_FLAG(U));
+  // 将用户代码写入用户虚拟内存
+  mem_kernel2user(root_proc->user_pagetable, 0, (addr_t)user_start, PAGE_SIZE);
 
   root_proc->state = RUNABLE;
 
   release_lock(&root_proc->proc_lock);
 }
 
+/**
+ * 初始化用户进程的系统环境
+ *
+ * @return void 无返回
+ */
 void user_env_init() {
   release_lock(&current_cpu_proc()->proc_lock);
 
