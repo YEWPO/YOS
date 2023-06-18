@@ -7,8 +7,13 @@
 #include "common.h"
 #include "memory/pm.h"
 
-static inline void backtrace(void) {
-  printf("backtrace:\n");
+/**
+ * 打印栈信息
+ *
+ * @return void 无返回
+ */
+static inline void backtrace() {
+  printf(ANSI_FMT("Backtrace: \n", ANSI_FG_YELLOW));
 
   uint64_t fp = READ_GRR(fp);
 
@@ -24,6 +29,11 @@ static inline void backtrace(void) {
   }
 }
 
+/**
+ * 打印panic的调试信息
+ *
+ * @return void 无返回
+ */
 static inline void panic() {
   printf(ANSI_FMT("sstatus: 0x%p\n", ANSI_FG_RED), READ_CSR(s, status));
   printf(ANSI_FMT("sepc: 0x%p\n", ANSI_FG_RED), READ_CSR(s, epc));
