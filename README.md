@@ -1,5 +1,7 @@
 # YOS
 
+**永久移走到YEWPO/Ycore，将采用rust编写**
+
 ## LOGO
 
 ```
